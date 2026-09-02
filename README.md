@@ -5,7 +5,8 @@ player character in Fallout 4 and Fallout 4 VR `.fos` saves. It extracts:
 
 - name, level, gender, race, location, play time, and XP;
 - base and modified SPECIAL values;
-- every stored perk entry with rank, source plugin, and local FormID.
+- character-sheet perks, with multi-tier perk records collapsed to the highest
+  acquired rank.
 
 The adjacent `.f4se` co-save is not required for these fields.
 
@@ -16,10 +17,14 @@ python3 fo4save.py Quicksave0_....fos
 python3 fo4save.py Quicksave0_....fos --json
 ```
 
-DLC and mod perks do not require hard-coded names to be extracted: unknown
-entries remain visible as `Plugin.esm:LocalFormID`. Friendly labels are only a
-presentation layer. You can supply more labels with a JSON file whose keys are
-resolved eight-digit load-order FormIDs:
+Internal bookkeeping perks are omitted from the character sheet. Separate
+records such as `Sniper 1` and `Sniper 2` become `Sniper — rank 2`. Magazine
+issue numbers are not mistaken for perk ranks, and collectible perks that use
+one record with a stored rank retain that rank.
+
+DLC and mod perks do not require hard-coded names to be extracted: unidentified
+entries remain visible as `Plugin.esm:LocalFormID`. You can supply more friendly
+labels with a JSON file whose keys are resolved eight-digit load-order FormIDs:
 
 ```json
 {

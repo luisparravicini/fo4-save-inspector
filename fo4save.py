@@ -9,6 +9,7 @@ from __future__ import annotations
 import argparse
 import json
 import math
+import re
 import struct
 import sys
 import zlib
@@ -24,6 +25,17 @@ ACHR_TYPE_INDEX = 1
 SPECIAL_IDS = {
     0x2C2: "strength", 0x2C3: "perception", 0x2C4: "endurance",
     0x2C5: "charisma", 0x2C6: "intelligence", 0x2C7: "agility", 0x2C8: "luck",
+}
+
+RANKED_PERKS = {
+    "Bloody Mess", "Gun Nut", "Gunslinger", "Local Leader", "Locksmith",
+    "Lone Wanderer", "Mister Sandman", "Ninja", "Rifleman", "Science!",
+    "Sneak", "Sniper",
+}
+
+PLUGIN_PERK_NAMES = {
+    ("DLCNukaWorld.esm", 0x0346F9): "Smart Grenade (hidden)",
+    ("DLCNukaWorld.esm", 0x035E71): "Lucky Rabbit's Foot",
 }
 
 # Labels are cosmetic. Unknown DLC/mod perks are still extracted with their
@@ -288,12 +300,14 @@ def scan_perks(save: CharacterSave, names: dict[int, str]) -> list[dict[str, Any
             if form_id in (None, 0) or rank > 20:
                 entries = []
                 break
-            known += form_id in names
+            plugin = save.plugin_for(form_id)
+            name = names.get(form_id) or PLUGIN_PERK_NAMES.get((plugin, form_id & 0xFFFFFF))
+            known += name is not None
             direct += raw >> 22 == 1
             entries.append({
-                "name": names.get(form_id), "rank": rank,
+                "name": name, "rank": rank,
                 "form_id": f"{form_id:08X}", "local_form_id": f"{form_id & 0xFFFFFF:06X}",
-                "plugin": save.plugin_for(form_id),
+                "plugin": plugin,
             })
         if entries and (known >= 2 or (count >= 5 and direct >= count // 2)):
             candidates.append((known * 100 + direct * 2 + min(count, 200), entries))
@@ -317,6 +331,41 @@ def clean_number(value: float) -> int | float:
     return int(value) if value.is_integer() else round(value, 6)
 
 
+def make_character_perks(entries: list[dict[str, Any]]) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
+    """Turn engine perk records into player-facing character-sheet entries."""
+    perks: dict[str, dict[str, Any]] = {}
+    unidentified: list[dict[str, Any]] = []
+    special_names = {name.title() for name in SPECIAL_IDS.values()}
+
+    for entry in entries:
+        name = entry["name"]
+        if not name:
+            unidentified.append({
+                "plugin": entry["plugin"],
+                "local_form_id": entry["local_form_id"],
+                "rank": entry["rank"],
+            })
+            continue
+        if name in {"Workshop player perk (hidden)", "Smart Grenade (hidden)"}:
+            continue
+
+        match = re.fullmatch(r"(.+) Rank (\d+)", name)
+        if match and match.group(1) in special_names:
+            continue  # Internal records already represented by the SPECIAL section.
+
+        match = re.fullmatch(r"(.+) (\d+)", name)
+        if match and match.group(1) in RANKED_PERKS:
+            label, rank = match.group(1), int(match.group(2))
+        else:
+            label, rank = name, entry["rank"]
+
+        previous = perks.get(label)
+        if previous is None or rank > previous["rank"]:
+            perks[label] = {"name": label, "rank": rank}
+
+    return list(perks.values()), unidentified
+
+
 def extract_character(save: CharacterSave, names: dict[int, str]) -> dict[str, Any]:
     base_values, modifiers = scan_actor_values(save)
     special: dict[str, Any] = {}
@@ -330,8 +379,15 @@ def extract_character(save: CharacterSave, names: dict[int, str]) -> dict[str, A
             "damage_modifier": clean_number(damage),
             "current": clean_number(base + permanent + temporary + damage),
         }
-    perks = scan_perks(save, names)
-    return {**save.header, "special": special, "perk_count": len(perks), "perks": perks}
+    stored_perks = scan_perks(save, names)
+    perks, unidentified = make_character_perks(stored_perks)
+    return {
+        **save.header,
+        "special": special,
+        "perks": perks,
+        "unidentified_perks": unidentified,
+        "stored_perk_entry_count": len(stored_perks),
+    }
 
 
 def print_character(info: dict[str, Any]) -> None:
@@ -342,14 +398,20 @@ def print_character(info: dict[str, Any]) -> None:
     print(f"Location:   {info['location']}")
     print(f"Play time:  {info['play_time']}")
     print(f"XP:         {info['current_xp']:.3f} / {info['required_xp']:.3f}")
-    print("\nSPECIAL (base + permanent + temporary + damage = current):")
+    print("\nSPECIAL:")
     for name, value in info["special"].items():
-        print(f"  {name.title():12} {value['base']:>4} + {value['permanent_modifier']:>4} + "
-              f"{value['temporary_modifier']:>4} + {value['damage_modifier']:>4} = {value['current']}")
-    print(f"\nPerks ({info['perk_count']} stored entries):")
+        modifiers = value["current"] - value["base"]
+        suffix = f" (base {value['base']}, modifiers {modifiers:+})" if modifiers else ""
+        print(f"  {name.title():12} {value['current']}{suffix}")
+    print("\nPerks:")
     for perk in info["perks"]:
-        label = perk["name"] or "<unknown name>"
-        print(f"  {perk['plugin']}:{perk['local_form_id']}  rank {perk['rank']:>2}  {label}")
+        suffix = f" — rank {perk['rank']}" if perk["rank"] > 1 else ""
+        print(f"  {perk['name']}{suffix}")
+    if info["unidentified_perks"]:
+        print("\nUnidentified perks:")
+        for perk in info["unidentified_perks"]:
+            suffix = f" — rank {perk['rank']}" if perk["rank"] > 1 else ""
+            print(f"  {perk['plugin']}:{perk['local_form_id']}{suffix}")
 
 
 def main(argv: list[str] | None = None) -> int:
