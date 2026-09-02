@@ -11,6 +11,8 @@ player character in Fallout 4 and Fallout 4 VR `.fos` saves. It extracts:
 Perks are grouped and alphabetized as level-up choices, magazine perks,
 bobbleheads, companion affinity perks, and other bonuses. Companion labels use
 the same `Perk (Companion affinity perk)` format for the base game and DLCs.
+Perks defined by an official add-on receive a secondary label such as
+`[Far Harbor]` or `[Nuka-World]` without being moved out of their category.
 
 The adjacent `.f4se` co-save is not required for these fields.
 

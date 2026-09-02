@@ -44,6 +44,15 @@ CATEGORY_ORDER = {
     "level_up": 0, "magazine": 1, "bobblehead": 2, "companion": 3, "other": 4,
 }
 
+DLC_LABELS = {
+    "DLCRobot.esm": "Automatron",
+    "DLCworkshop01.esm": "Wasteland Workshop",
+    "DLCCoast.esm": "Far Harbor",
+    "DLCworkshop02.esm": "Contraptions Workshop",
+    "DLCworkshop03.esm": "Vault-Tec Workshop",
+    "DLCNukaWorld.esm": "Nuka-World",
+}
+
 COMPANION_PERK_NAMES = {
     0x001F4187: "Trigger Rush (Cait affinity perk)",
     0x001EB99B: "Robot Sympathy (Codsworth affinity perk)",
@@ -371,6 +380,7 @@ def make_character_perks(entries: list[dict[str, Any]]) -> tuple[list[dict[str, 
                 "plugin": entry["plugin"],
                 "local_form_id": entry["local_form_id"],
                 "rank": entry["rank"],
+                "dlc": DLC_LABELS.get(entry["plugin"]),
             })
             continue
         if name in {"Workshop player perk (hidden)", "Smart Grenade (hidden)"}:
@@ -388,7 +398,12 @@ def make_character_perks(entries: list[dict[str, Any]]) -> tuple[list[dict[str, 
 
         previous = perks.get(label)
         if previous is None or rank > previous["rank"]:
-            perks[label] = {"name": label, "rank": rank, "category": perk_category(label)}
+            perks[label] = {
+                "name": label,
+                "rank": rank,
+                "category": perk_category(label),
+                "dlc": DLC_LABELS.get(entry["plugin"]),
+            }
 
     result = sorted(
         perks.values(),
@@ -459,12 +474,14 @@ def print_character(info: dict[str, Any]) -> None:
             current_category = perk["category"]
             print(f"\n{headings[current_category]}:")
         suffix = f" — rank {perk['rank']}" if perk["rank"] > 1 else ""
-        print(f"  {perk['name']}{suffix}")
+        dlc = f" [{perk['dlc']}]" if perk["dlc"] else ""
+        print(f"  {perk['name']}{dlc}{suffix}")
     if info["unidentified_perks"]:
         print("\nUnidentified perks:")
         for perk in info["unidentified_perks"]:
             suffix = f" — rank {perk['rank']}" if perk["rank"] > 1 else ""
-            print(f"  {perk['plugin']}:{perk['local_form_id']}{suffix}")
+            dlc = f" [{perk['dlc']}]" if perk["dlc"] else ""
+            print(f"  {perk['plugin']}:{perk['local_form_id']}{dlc}{suffix}")
 
 
 def main(argv: list[str] | None = None) -> int:
