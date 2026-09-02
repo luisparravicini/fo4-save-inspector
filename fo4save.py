@@ -40,7 +40,7 @@ MAGAZINE_PERK_PREFIXES = {
     "Unstoppables", "Wasteland Survival",
 }
 
-CATEGORY_ORDER = {"level_up": 0, "magazine": 1, "other": 2}
+CATEGORY_ORDER = {"level_up": 0, "magazine": 1, "bobblehead": 2, "other": 3}
 
 PLUGIN_PERK_NAMES = {
     ("DLCNukaWorld.esm", 0x0346F9): "Smart Grenade (hidden)",
@@ -384,6 +384,8 @@ def perk_category(name: str) -> str:
         return "level_up"
     if any(name == prefix or name.startswith(prefix + " ") for prefix in MAGAZINE_PERK_PREFIXES):
         return "magazine"
+    if name.casefold().endswith(" bobblehead"):
+        return "bobblehead"
     return "other"
 
 
@@ -427,6 +429,7 @@ def print_character(info: dict[str, Any]) -> None:
     headings = {
         "level_up": "Level-up perks",
         "magazine": "Magazine perks",
+        "bobblehead": "Bobbleheads",
         "other": "Other perks",
     }
     current_category = None
