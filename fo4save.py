@@ -33,6 +33,15 @@ RANKED_PERKS = {
     "Sneak", "Sniper",
 }
 
+MAGAZINE_PERK_PREFIXES = {
+    "Astoundingly Awesome", "Covert Operations", "Grognak the Barbarian",
+    "Guns and Bullets", "Junktown Vendor", "Live & Love",
+    "Massachusetts Surgical Journal", "Tesla Science", "Tumblers Today",
+    "Unstoppables", "Wasteland Survival",
+}
+
+CATEGORY_ORDER = {"level_up": 0, "magazine": 1, "other": 2}
+
 PLUGIN_PERK_NAMES = {
     ("DLCNukaWorld.esm", 0x0346F9): "Smart Grenade (hidden)",
     ("DLCNukaWorld.esm", 0x035E71): "Lucky Rabbit's Foot",
@@ -361,9 +370,21 @@ def make_character_perks(entries: list[dict[str, Any]]) -> tuple[list[dict[str, 
 
         previous = perks.get(label)
         if previous is None or rank > previous["rank"]:
-            perks[label] = {"name": label, "rank": rank}
+            perks[label] = {"name": label, "rank": rank, "category": perk_category(label)}
 
-    return list(perks.values()), unidentified
+    result = sorted(
+        perks.values(),
+        key=lambda perk: (CATEGORY_ORDER[perk["category"]], perk["name"].casefold()),
+    )
+    return result, unidentified
+
+
+def perk_category(name: str) -> str:
+    if name in RANKED_PERKS:
+        return "level_up"
+    if any(name == prefix or name.startswith(prefix + " ") for prefix in MAGAZINE_PERK_PREFIXES):
+        return "magazine"
+    return "other"
 
 
 def extract_character(save: CharacterSave, names: dict[int, str]) -> dict[str, Any]:
@@ -403,8 +424,16 @@ def print_character(info: dict[str, Any]) -> None:
         modifiers = value["current"] - value["base"]
         suffix = f" (base {value['base']}, modifiers {modifiers:+})" if modifiers else ""
         print(f"  {name.title():12} {value['current']}{suffix}")
-    print("\nPerks:")
+    headings = {
+        "level_up": "Level-up perks",
+        "magazine": "Magazine perks",
+        "other": "Other perks",
+    }
+    current_category = None
     for perk in info["perks"]:
+        if perk["category"] != current_category:
+            current_category = perk["category"]
+            print(f"\n{headings[current_category]}:")
         suffix = f" — rank {perk['rank']}" if perk["rank"] > 1 else ""
         print(f"  {perk['name']}{suffix}")
     if info["unidentified_perks"]:

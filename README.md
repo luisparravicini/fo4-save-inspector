@@ -8,6 +8,9 @@ player character in Fallout 4 and Fallout 4 VR `.fos` saves. It extracts:
 - character-sheet perks, with multi-tier perk records collapsed to the highest
   acquired rank.
 
+Perks are grouped and alphabetized as level-up choices, magazine perks, and
+other bonuses such as companion perks and bobbleheads.
+
 The adjacent `.f4se` co-save is not required for these fields.
 
 ## Usage
