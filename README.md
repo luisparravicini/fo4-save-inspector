@@ -9,7 +9,8 @@ player character in Fallout 4 and Fallout 4 VR `.fos` saves. It extracts:
   acquired rank.
 
 Perks are grouped and alphabetized as level-up choices, magazine perks,
-bobbleheads, and other bonuses such as companion or quest perks.
+bobbleheads, companion affinity perks, and other bonuses. Companion labels use
+the same `Perk (Companion affinity perk)` format for the base game and DLCs.
 
 The adjacent `.f4se` co-save is not required for these fields.
 

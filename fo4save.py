@@ -40,11 +40,30 @@ MAGAZINE_PERK_PREFIXES = {
     "Unstoppables", "Wasteland Survival",
 }
 
-CATEGORY_ORDER = {"level_up": 0, "magazine": 1, "bobblehead": 2, "other": 3}
+CATEGORY_ORDER = {
+    "level_up": 0, "magazine": 1, "bobblehead": 2, "companion": 3, "other": 4,
+}
+
+COMPANION_PERK_NAMES = {
+    0x001F4187: "Trigger Rush (Cait affinity perk)",
+    0x001EB99B: "Robot Sympathy (Codsworth affinity perk)",
+    0x001E67BC: "Combat Medic (Curie affinity perk)",
+    0x0008428D: "Know Your Enemy (Danse affinity perk)",
+    0x0008530E: "Cloak & Dagger (Deacon affinity perk)",
+    0x00178D57: "Isodoped (Hancock affinity perk)",
+    0x00178D50: "Killshot (MacCready affinity perk)",
+    0x001E67BD: "Close to Metal (Nick Valentine affinity perk)",
+    0x00178D54: "Gift of Gab (Piper affinity perk)",
+    0x00084298: "United We Stand (Preston Garvey affinity perk)",
+    0x00084290: "Berserk (Strong affinity perk)",
+    0x000842A0: "Shield Harmonics (X6-88 affinity perk)",
+}
 
 PLUGIN_PERK_NAMES = {
     ("DLCNukaWorld.esm", 0x0346F9): "Smart Grenade (hidden)",
     ("DLCNukaWorld.esm", 0x035E71): "Lucky Rabbit's Foot",
+    ("DLCCoast.esm", 0x018621): "Hunter's Wisdom (Old Longfellow affinity perk)",
+    ("DLCNukaWorld.esm", 0x0479EF): "Lessons in Blood (Porter Gage affinity perk)",
 }
 
 # Labels are cosmetic. Unknown DLC/mod perks are still extracted with their
@@ -85,10 +104,9 @@ PERK_NAMES = {
     0x001696AC: "Live & Love 5", 0x001696AE: "Live & Love 7",
     0x001C63E8: "Wasteland Survival 5", 0x001C63E9: "Wasteland Survival 7",
     0x001C63EB: "Wasteland Survival 8",
-    0x001F4187: "Trigger Rush (Cait affinity perk)",
-    0x001E67BC: "Combat Medic (Curie affinity perk)",
-    0x00249E2F: "Companion/quest perk",
 }
+
+PERK_NAMES.update(COMPANION_PERK_NAMES)
 
 
 def _add_special_rank_names() -> None:
@@ -386,6 +404,8 @@ def perk_category(name: str) -> str:
         return "magazine"
     if name.casefold().endswith(" bobblehead"):
         return "bobblehead"
+    if name.endswith(" affinity perk)"):
+        return "companion"
     return "other"
 
 
@@ -430,6 +450,7 @@ def print_character(info: dict[str, Any]) -> None:
         "level_up": "Level-up perks",
         "magazine": "Magazine perks",
         "bobblehead": "Bobbleheads",
+        "companion": "Companion perks",
         "other": "Other perks",
     }
     current_category = None
