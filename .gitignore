@@ -1,0 +1,4 @@
+__pycache__/
+*.py[cod]
+*.fos
+*.f4se
