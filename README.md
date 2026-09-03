@@ -9,6 +9,10 @@ extracts:
 - character-sheet perks, with multi-tier perk records collapsed to the highest
   acquired rank.
 
+> **Compatibility:** Currently tested with Fallout 4 VR saves. Desktop Fallout
+> 4 uses the same underlying save format and is expected to work, but has not
+> yet been validated, particularly with ESL/light plugins.
+
 Perks are grouped and alphabetized as level-up choices, magazine perks,
 bobbleheads, companion affinity perks, and other bonuses. Companion labels use
 the same `Perk (Companion affinity perk)` format for the base game and DLCs.
