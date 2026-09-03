@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Extract character information from a Fallout 4 / Fallout 4 VR save.
+"""Inspect character information in a Fallout 4 / Fallout 4 VR save.
 
 The parser is read-only and has no third-party dependencies.
 """

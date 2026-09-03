@@ -1,7 +1,8 @@
-# Fallout 4 VR character extractor
+# Fallout 4 Save Inspector
 
-`fo4save.py` is a dependency-free, read-only Python 3 script focused on the
-player character in Fallout 4 and Fallout 4 VR `.fos` saves. It extracts:
+`fo4save.py` is a dependency-free, read-only Python 3 inspector currently
+focused on the player character in Fallout 4 and Fallout 4 VR `.fos` saves. It
+extracts:
 
 - name, level, gender, race, location, play time, and XP;
 - base and modified SPECIAL values;
@@ -21,6 +22,14 @@ The adjacent `.f4se` co-save is not required for these fields.
 ```bash
 python3 fo4save.py Quicksave0_....fos
 python3 fo4save.py Quicksave0_....fos --json
+```
+
+Use `--json` for machine-readable output. It includes the save metadata,
+detailed SPECIAL values, categorized perks, unidentified perks, and stored perk
+entry count. The output can be saved to a file:
+
+```bash
+python3 fo4save.py save.fos --json > character.json
 ```
 
 Internal bookkeeping perks are omitted from the character sheet. Separate
@@ -50,9 +59,23 @@ and perk arrays. It never modifies the save.
 ## Format notes and credits
 
 The implementation was informed by public Fallout 4 save-format research and
-the open-source FallrimTools/ReSaver and `fo4-save-cleaner` projects. Three-byte
-save RefIDs use a one-based index into the save's four-byte FormID array.
+the open-source [FallrimTools/ReSaver] and [fo4-save-cleaner] projects. Their
+source code is not included in this repository. Three-byte save RefIDs use a
+one-based index into the save's four-byte FormID array.
 
 SPECIAL is displayed as base plus the Creation Engine's permanent, temporary,
 and damage modifier slots, so equipment and other active effects stay separate
 from the underlying character values.
+
+[FallrimTools/ReSaver]: https://github.com/mdfairch/FallrimTools
+[fo4-save-cleaner]: https://github.com/pub-struct/fo4-save-cleaner
+
+## License
+
+This project is available under the [MIT License](LICENSE).
+
+## Disclaimer
+
+This is an unofficial fan-made project. It is not affiliated with or endorsed
+by Bethesda Softworks. Fallout 4, Fallout 4 VR, and related names are the
+property of their respective owners.
