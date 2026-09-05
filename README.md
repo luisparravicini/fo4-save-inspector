@@ -1,6 +1,6 @@
 # Fallout 4 Save Inspector
 
-`fo4save.py` is a dependency-free, read-only Python 3 inspector currently
+`fo4save.py` is a dependency-free, read-only Python 3.10+ inspector currently
 focused on the player character in Fallout 4 and Fallout 4 VR `.fos` saves. It
 extracts:
 
@@ -19,11 +19,11 @@ extracts:
 
 Perks are grouped and alphabetized as level-up choices, magazine perks,
 bobbleheads, companion affinity perks, quest perks, and other bonuses. The
-built-in names cover the complete base-game perk chart and its official DLC
-ranks, official perk magazines, skill bobbleheads, companion affinity perks,
-and documented permanent quest rewards. Temporary effects, NPC abilities,
-equipment modifiers, cut content, and internal bookkeeping perks are not
-presented as character-sheet perks. Companion labels use the same
+built-in names cover the player-facing base-game perk chart and its official
+DLC ranks, official perk magazines, skill bobbleheads, companion affinity
+perks, and documented permanent quest rewards. Temporary effects, NPC
+abilities, equipment modifiers, cut content, and internal bookkeeping perks
+are not presented as character-sheet perks. Companion labels use the same
 `Perk (Companion affinity perk)` format for the base game and DLCs. Perks
 defined by an official add-on receive a secondary label such as `[Far Harbor]`
 or `[Nuka-World]` without being moved out of their category.
@@ -35,6 +35,12 @@ The adjacent `.f4se` co-save is not required for these fields.
 ```bash
 python3 fo4save.py Quicksave0_....fos
 python3 fo4save.py Quicksave0_....fos --json
+```
+
+On Windows, the Python launcher can be used instead:
+
+```powershell
+py fo4save.py Quicksave0_....fos --json
 ```
 
 Use `--json` for machine-readable output. It includes the save metadata,
@@ -51,9 +57,9 @@ records such as `Sniper 1` and `Sniper 2` become `Sniper — rank 2`. Magazine
 issue numbers are not mistaken for perk ranks, and collectible perks that use
 one record with a stored rank retain that rank.
 
-DLC and mod perks do not require hard-coded names to be extracted: unidentified
-entries remain visible as `Plugin.esm:LocalFormID`. You can supply more friendly
-labels with a JSON file whose keys are resolved eight-digit load-order FormIDs:
+Unknown DLC and mod perk records are still detected and remain visible as
+`Plugin.esm:LocalFormID`. Supply a mapping to give them friendly labels using a
+JSON file whose keys are resolved eight-digit load-order FormIDs:
 
 ```json
 {
@@ -66,9 +72,27 @@ labels with a JSON file whose keys are resolved eight-digit load-order FormIDs:
 python3 fo4save.py save.fos --names perk-names.json
 ```
 
+Resolved FormIDs depend on the save's plugin load order. A regular plugin's
+high-byte prefix can therefore change between load orders. An ESL/light-plugin
+FormID also contains its `FExxx` light-plugin index, so a custom mapping may
+need to be updated when the load order changes.
+
 The parser reads only enough of the save container to find the canonical
 player actor (`00000014`), resolve its references, and decode its actor-value
 and perk arrays. It never modifies the save.
+
+## Limitations
+
+The player record does not label these structures for this standalone parser,
+so it locates the actor-value and perk arrays using validated structural
+patterns. An unsupported or substantially different save format may therefore
+fail with an explicit parsing error.
+
+Only records stored in the player's perk array are reported. This tool is not
+a catalog of every game object and does not report inventory items, temporary
+effects, NPC-only abilities, or perks the character has not acquired. ESL
+FormIDs and plugin names are supported, but the compatibility corpus does not
+yet contain an acquired perk defined by an ESL plugin.
 
 ## Testing
 
