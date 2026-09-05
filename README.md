@@ -9,9 +9,12 @@ extracts:
 - character-sheet perks, with multi-tier perk records collapsed to the highest
   acquired rank.
 
-> **Compatibility:** Currently tested with Fallout 4 VR saves. Desktop Fallout
-> 4 uses the same underlying save format and is expected to work, but has not
-> yet been validated, particularly with ESL/light plugins.
+> **Compatibility:** Tested against 52 Fallout 4 VR saves from game version
+> 1.2.72.0 (save form version 67) and five desktop Fallout 4 saves from game
+> versions 1.10.984.0 and 1.11.221.0 (save form versions 68 and 69). All 57
+> saves parse successfully. This corpus includes `FE` FormIDs but no acquired
+> perks supplied by ESL/light plugins, so light-plugin perk attribution remains
+> unvalidated.
 
 Perks are grouped and alphabetized as level-up choices, magazine perks,
 bobbleheads, companion affinity perks, and other bonuses. Companion labels use
@@ -60,6 +63,19 @@ python3 fo4save.py save.fos --names perk-names.json
 The parser reads only enough of the save container to find the canonical
 player actor (`00000014`), resolve its references, and decode its actor-value
 and perk arrays. It never modifies the save.
+
+## Testing
+
+Run the dependency-free unit tests with:
+
+```bash
+python3 -m unittest discover -s tests -v
+```
+
+The local compatibility pass used real Fallout 4 and Fallout 4 VR saves on
+Windows. Save files, character details, machine paths, and generated output are
+not part of this repository. The parser and CLI remain portable Python and use
+UTF-8 output across Windows, Linux, and macOS.
 
 ## Format notes and credits
 
