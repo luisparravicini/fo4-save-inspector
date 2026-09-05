@@ -406,6 +406,7 @@ class CharacterSave:
         self.data = path.read_bytes()
         self.header: dict[str, Any] = {}
         self.plugins: list[str] = []
+        self.light_plugins: list[str] = []
         self.form_ids: tuple[int, ...] = ()
         self.player_body = b""
         self._parse()
@@ -435,7 +436,12 @@ class CharacterSave:
 
         plugin_size, plugin_start = r.u32(), r.pos
         self.plugins = [r.wstring() for _ in range(r.u8())]
-        r.pos = plugin_start + plugin_size
+        plugin_end = plugin_start + plugin_size
+        if r.pos < plugin_end:
+            self.light_plugins = [r.wstring() for _ in range(r.u16())]
+        if r.pos > plugin_end:
+            raise ParseError("plugin info exceeds its declared size")
+        r.pos = plugin_end
 
         fields = [r.u32() for _ in range(10)]
         form_id_offset, change_forms_offset, change_form_count = fields[0], fields[4], fields[9]
@@ -484,7 +490,18 @@ class CharacterSave:
         index = form_id >> 24
         if index == 0xFF:
             return "<created>"
+        if index == 0xFE:
+            light_index = (form_id >> 12) & 0xFFF
+            if light_index < len(self.light_plugins):
+                return self.light_plugins[light_index]
+            return f"<light-load-order {light_index:03X}>"
         return self.plugins[index] if index < len(self.plugins) else f"<load-order {index:02X}>"
+
+    @staticmethod
+    def local_form_id(form_id: int) -> str:
+        if form_id >> 24 == 0xFE:
+            return f"{form_id & 0xFFF:03X}"
+        return f"{form_id & 0xFFFFFF:06X}"
 
     @staticmethod
     def _filetime(value: int) -> str:
@@ -555,12 +572,14 @@ def scan_perks(save: CharacterSave, names: dict[int, str]) -> list[dict[str, Any
                 entries = []
                 break
             plugin = save.plugin_for(form_id)
-            name = names.get(form_id) or PLUGIN_PERK_NAMES.get((plugin, form_id & 0xFFFFFF))
+            local_id = form_id & (0xFFF if form_id >> 24 == 0xFE else 0xFFFFFF)
+            name = names.get(form_id) or PLUGIN_PERK_NAMES.get((plugin, local_id))
             known += name is not None
             direct += raw >> 22 == 1
             entries.append({
                 "name": name, "rank": rank,
-                "form_id": f"{form_id:08X}", "local_form_id": f"{form_id & 0xFFFFFF:06X}",
+                "form_id": f"{form_id:08X}",
+                "local_form_id": save.local_form_id(form_id),
                 "plugin": plugin,
             })
         small_direct_array = count >= 2 and known >= 1 and direct == count

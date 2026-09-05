@@ -12,9 +12,10 @@ extracts:
 > **Compatibility:** Tested against 52 Fallout 4 VR saves from game version
 > 1.2.72.0 (save form version 67) and five desktop Fallout 4 saves from game
 > versions 1.10.984.0 and 1.11.221.0 (save form versions 68 and 69). All 57
-> saves parse successfully. This corpus includes `FE` FormIDs but no acquired
-> perks supplied by ESL/light plugins, so light-plugin perk attribution remains
-> unvalidated.
+> saves parse successfully. The desktop corpus includes nine ESL plugins and
+> `FE` FormIDs, which are resolved to their light-plugin names and three-digit
+> local IDs. It has no acquired perks supplied by those plugins, so extraction
+> of an actual ESL-defined perk has not yet been observed end to end.
 
 Perks are grouped and alphabetized as level-up choices, magazine perks,
 bobbleheads, companion affinity perks, quest perks, and other bonuses. The
@@ -88,6 +89,10 @@ The implementation was informed by public Fallout 4 save-format research and
 the open-source [FallrimTools/ReSaver] and [fo4-save-cleaner] projects. Their
 source code is not included in this repository. Three-byte save RefIDs use a
 one-based index into the save's four-byte FormID array.
+
+Regular FormIDs use their high byte as an index into the full-plugin list.
+Light-plugin FormIDs use `FExxxYYY`, where `xxx` indexes the save's ESL/light
+plugin list and `YYY` is the plugin-local FormID.
 
 SPECIAL is displayed as base plus the Creation Engine's permanent, temporary,
 and damage modifier slots, so equipment and other active effects stay separate

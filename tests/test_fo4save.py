@@ -22,6 +22,8 @@ class SyntheticSave:
     def plugin_for(form_id):
         return "Fallout4.esm"
 
+    local_form_id = staticmethod(fo4save.CharacterSave.local_form_id)
+
 
 class PerkArrayTests(unittest.TestCase):
     def test_small_early_game_perk_array(self):
@@ -75,6 +77,23 @@ class PerkArrayTests(unittest.TestCase):
         perks, _ = fo4save.make_character_perks(entries)
 
         self.assertEqual("quest", perks[0]["category"])
+
+
+class LightPluginTests(unittest.TestCase):
+    def setUp(self):
+        self.save = fo4save.CharacterSave.__new__(fo4save.CharacterSave)
+        self.save.plugins = ["Fallout4.esm"]
+        self.save.light_plugins = ["First.esl", "Second.esl"]
+
+    def test_light_plugin_index_is_resolved(self):
+        self.assertEqual("Second.esl", self.save.plugin_for(0xFE001ABC))
+
+    def test_light_plugin_local_form_id_uses_twelve_bits(self):
+        self.assertEqual("ABC", self.save.local_form_id(0xFE001ABC))
+
+    def test_unknown_light_plugin_index_is_explicit(self):
+        self.assertEqual("<light-load-order 002>",
+                         self.save.plugin_for(0xFE002123))
 
 
 class OutputTests(unittest.TestCase):
