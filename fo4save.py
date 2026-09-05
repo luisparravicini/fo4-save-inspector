@@ -345,7 +345,9 @@ def scan_perks(save: CharacterSave, names: dict[int, str]) -> list[dict[str, Any
                 "form_id": f"{form_id:08X}", "local_form_id": f"{form_id & 0xFFFFFF:06X}",
                 "plugin": plugin,
             })
-        if entries and (known >= 2 or (count >= 5 and direct >= count // 2)):
+        small_direct_array = count >= 2 and known >= 1 and direct == count
+        if entries and (known >= 2 or (count >= 5 and direct >= count // 2)
+                        or small_direct_array):
             candidates.append((known * 100 + direct * 2 + min(count, 200), entries))
     if not candidates:
         raise ParseError("could not locate the player's perk array")
