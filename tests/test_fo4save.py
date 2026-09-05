@@ -33,6 +33,36 @@ class PerkArrayTests(unittest.TestCase):
         self.assertEqual(["001A54A4", "0000084B"],
                          [perk["form_id"] for perk in perks])
 
+    def test_known_hidden_perks_are_omitted(self):
+        entries = [
+            {"name": "Tutorial drink water (hidden)", "rank": 1,
+             "form_id": "001A54A4", "local_form_id": "1A54A4",
+             "plugin": "Fallout4.esm"},
+        ]
+
+        perks, unidentified = fo4save.make_character_perks(entries)
+
+        self.assertEqual([], perks)
+        self.assertEqual([], unidentified)
+
+    def test_new_ranked_and_magazine_names_are_classified(self):
+        entries = [
+            {"name": "Commando 1", "rank": 1, "form_id": "0004A0C5",
+             "local_form_id": "04A0C5", "plugin": "Fallout4.esm"},
+            {"name": "Commando 3", "rank": 1, "form_id": "0004A0C7",
+             "local_form_id": "04A0C7", "plugin": "Fallout4.esm"},
+            {"name": "Islander's Almanac 2", "rank": 1,
+             "form_id": "03050B33", "local_form_id": "050B33",
+             "plugin": "DLCCoast.esm"},
+        ]
+
+        perks, _ = fo4save.make_character_perks(entries)
+
+        self.assertEqual("Commando", perks[0]["name"])
+        self.assertEqual(3, perks[0]["rank"])
+        self.assertEqual("level_up", perks[0]["category"])
+        self.assertEqual("magazine", perks[1]["category"])
+
 
 if __name__ == "__main__":
     unittest.main()

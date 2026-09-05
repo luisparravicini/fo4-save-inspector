@@ -28,16 +28,19 @@ SPECIAL_IDS = {
 }
 
 RANKED_PERKS = {
-    "Bloody Mess", "Gun Nut", "Gunslinger", "Local Leader", "Locksmith",
-    "Lone Wanderer", "Mister Sandman", "Ninja", "Rifleman", "Science!",
-    "Sneak", "Sniper",
+    "Action Boy/Girl", "Armorer", "Black Widow", "Blacksmith", "Bloody Mess",
+    "Cap Collector", "Commando", "Demolition Expert", "Gun Nut", "Gunslinger",
+    "Hacker", "Heavy Gunner", "Local Leader", "Locksmith", "Lone Wanderer",
+    "Medic", "Mister Sandman", "Ninja", "Nuclear Physicist", "Pickpocket",
+    "Quick Hands", "Rifleman", "Robotics Expert", "Science!", "Scrapper",
+    "Scrounger", "Sneak", "Sniper", "Steady Aim", "Strong Back", "Toughness",
 }
 
 MAGAZINE_PERK_PREFIXES = {
     "Astoundingly Awesome", "Covert Operations", "Grognak the Barbarian",
     "Guns and Bullets", "Junktown Vendor", "Live & Love",
     "Massachusetts Surgical Journal", "Tesla Science", "Tumblers Today",
-    "Unstoppables", "Wasteland Survival",
+    "Unstoppables", "Wasteland Survival", "Islander's Almanac", "SCAV!",
 }
 
 CATEGORY_ORDER = {
@@ -73,12 +76,38 @@ PLUGIN_PERK_NAMES = {
     ("DLCNukaWorld.esm", 0x035E71): "Lucky Rabbit's Foot",
     ("DLCCoast.esm", 0x018621): "Hunter's Wisdom (Old Longfellow affinity perk)",
     ("DLCNukaWorld.esm", 0x0479EF): "Lessons in Blood (Porter Gage affinity perk)",
+    ("DLCCoast.esm", 0x02C9B3): "Protector of Acadia",
+    ("DLCCoast.esm", 0x02C9B5): "Far Harbor Survivalist",
+    ("DLCCoast.esm", 0x034E80): "Action Boy/Girl 3",
+    ("DLCCoast.esm", 0x0423A3): "Strong Back 5",
+    ("DLCCoast.esm", 0x04B98F): "Acadia barter perk (hidden)",
+    ("DLCCoast.esm", 0x050B32): "Islander's Almanac 1",
+    ("DLCCoast.esm", 0x050B33): "Islander's Almanac 2",
+    ("DLCCoast.esm", 0x050B34): "Islander's Almanac 3",
+    ("DLCCoast.esm", 0x050B36): "Islander's Almanac 5",
+    ("DLCNukaWorld.esm", 0x02A9F8): "SCAV! - Villainous Virtuosity",
+    ("DLCNukaWorld.esm", 0x02A9F9): "SCAV! - Bladed Bravado",
+    ("DLCNukaWorld.esm", 0x02A9FA): "SCAV! - Pugilistic Propensities",
+    ("DLCNukaWorld.esm", 0x02A9FB): "SCAV! - Cautionary Crafts",
+    ("DLCNukaWorld.esm", 0x032ADF): "Shock collar perk (hidden)",
+}
+
+HIDDEN_PERK_NAMES = {
+    "Acadia barter perk (hidden)", "Ashes quest perk (hidden)",
+    "Common legendary modifier (hidden)", "Eleanor friendship perk (hidden)",
+    "General Atomics prices perk (hidden)", "Mod armor penetration (hidden)",
+    "Power armor perk (hidden)", "Power armor radiation resistance (hidden)",
+    "Power armor water breathing (hidden)", "Shock collar perk (hidden)",
+    "Smart Grenade (hidden)", "Tutorial drink water (hidden)",
+    "Workshop player perk (hidden)",
 }
 
 # Labels are cosmetic. Unknown DLC/mod perks are still extracted with their
 # plugin, local FormID, and rank, and can be named with --names.
 PERK_NAMES = {
     0x0000084B: "Workshop player perk (hidden)",
+    0x0001F8A9: "Power armor perk (hidden)",
+    0x000221FC: "Quick Hands 1", 0x000264D8: "Blacksmith 3",
     0x0004A09F: "Gunslinger 1", 0x0004A0A9: "Gunslinger 2",
     0x0004A0AA: "Gunslinger 3", 0x0006FA1E: "Gunslinger 4", 0x00065E24: "Gunslinger 5",
     0x0004A0B6: "Rifleman 1", 0x0004A0B7: "Rifleman 2",
@@ -100,9 +129,37 @@ PERK_NAMES = {
     0x000264DB: "Science! 3", 0x0016578F: "Science! 4",
     0x001D246B: "Lone Wanderer 1", 0x001D246D: "Lone Wanderer 2",
     0x001D246E: "Lone Wanderer 3",
+    0x0004A0AB: "Toughness 1", 0x0004A0B0: "Scrounger 1",
+    0x0004A0C5: "Commando 1", 0x0004A0C6: "Commando 2",
+    0x0004A0C7: "Commando 3", 0x0006FA24: "Commando 4",
+    0x00065E0D: "Commando 5", 0x0004A0D4: "Black Widow 1",
+    0x00065E31: "Black Widow 2", 0x0004A0D6: "Heavy Gunner 1",
+    0x0004B24E: "Strong Back 1", 0x00065E5B: "Strong Back 2",
+    0x00065E5C: "Strong Back 3", 0x001D2489: "Strong Back 4",
+    0x0004B253: "Blacksmith 1", 0x0004B26A: "Blacksmith 2",
+    0x0004B254: "Armorer 1", 0x0004B255: "Armorer 2",
+    0x0004B256: "Armorer 3", 0x001797EA: "Armorer 4",
+    0x0004C923: "Demolition Expert 1", 0x0004C924: "Demolition Expert 2",
+    0x0004C926: "Medic 1", 0x0004C942: "Fortune Finder 1",
+    0x0004D869: "Action Boy/Girl 1", 0x0004D872: "Action Boy/Girl 1",
+    0x00065DF6: "Action Boy/Girl 2", 0x0004D889: "Robotics Expert 1",
+    0x00065E64: "Robotics Expert 2", 0x001ACF96: "Robotics Expert 3",
+    0x0004D88A: "Pickpocket 1", 0x00052403: "Hacker 1",
+    0x00052404: "Hacker 2", 0x00052405: "Hacker 3",
+    0x00065E65: "Scrapper 1", 0x001D2483: "Scrapper 2",
+    0x001ACF9A: "Scrounger 2", 0x001D2456: "Cap Collector 1",
+    0x001D246F: "Nuclear Physicist 1", 0x001D2470: "Nuclear Physicist 2",
+    0x001D2471: "Nuclear Physicist 3", 0x001D2478: "Quick Hands 2",
+    0x001D2487: "Steady Aim 1", 0x001D2488: "Steady Aim 2",
+    0x000E36F9: "Aquaboy/Aquagirl 1", 0x000E9453: "Aquaboy/Aquagirl 1",
+    0x000F3C1A: "Lover's Embrace", 0x0005C526: "Well Rested",
     0x0006167D: "Big Guns bobblehead", 0x0006167E: "Energy Weapons bobblehead",
     0x00061681: "Medicine bobblehead", 0x00061683: "Repair bobblehead",
     0x00061687: "Speech bobblehead",
+    0x0006167C: "Barter bobblehead", 0x00061680: "Lock Picking bobblehead",
+    0x00061682: "Melee bobblehead", 0x00061684: "Science bobblehead",
+    0x00061685: "Small Guns bobblehead", 0x00061686: "Sneak bobblehead",
+    0x00061688: "Unarmed bobblehead",
     0x0008E3A6: "Grognak the Barbarian", 0x0008E3A4: "Covert Operations",
     0x0008E3A5: "Massachusetts Surgical Journal",
     0x00092A82: "Guns and Bullets", 0x00092A6E: "Tesla Science",
@@ -113,6 +170,24 @@ PERK_NAMES = {
     0x001696AC: "Live & Love 5", 0x001696AE: "Live & Love 7",
     0x001C63E8: "Wasteland Survival 5", 0x001C63E9: "Wasteland Survival 7",
     0x001C63EB: "Wasteland Survival 8",
+    0x00169688: "Astoundingly Awesome 6", 0x00169689: "Astoundingly Awesome 14",
+    0x00169690: "Astoundingly Awesome 8", 0x00169691: "Astoundingly Awesome 3",
+    0x00169695: "Astoundingly Awesome 5", 0x00169696: "Astoundingly Awesome 13",
+    0x00169698: "Astoundingly Awesome 10", 0x001C501E: "Astoundingly Awesome 1",
+    0x001696A8: "Live & Love 1", 0x001696A9: "Live & Love 2",
+    0x001696AA: "Live & Love 3", 0x001696AB: "Live & Love 4",
+    0x001696AF: "Live & Love 8", 0x00135F08: "Wasteland Survival 9",
+    0x001C63E3: "Wasteland Survival 2", 0x001C63E4: "Wasteland Survival 6",
+    0x001C63E6: "Wasteland Survival 1", 0x001C63E7: "Wasteland Survival 3",
+    0x000B6F63: "La Coiffe",
+    0x000D00A0: "Friend of The Cats", 0x000E5276: "General Atomics prices perk (hidden)",
+    0x001A54A4: "Tutorial drink water (hidden)",
+    0x001BE752: "Power armor water breathing (hidden)",
+    0x001E6849: "Common legendary modifier (hidden)",
+    0x001F4166: "Mod armor penetration (hidden)",
+    0x00204A55: "Power armor radiation resistance (hidden)",
+    0x00206182: "Eleanor friendship perk (hidden)",
+    0x00249E2F: "Ashes quest perk (hidden)",
 }
 
 PERK_NAMES.update(COMPANION_PERK_NAMES)
@@ -385,7 +460,7 @@ def make_character_perks(entries: list[dict[str, Any]]) -> tuple[list[dict[str, 
                 "dlc": DLC_LABELS.get(entry["plugin"]),
             })
             continue
-        if name in {"Workshop player perk (hidden)", "Smart Grenade (hidden)"}:
+        if name in HIDDEN_PERK_NAMES:
             continue
 
         match = re.fullmatch(r"(.+) Rank (\d+)", name)
