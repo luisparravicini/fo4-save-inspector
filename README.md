@@ -30,7 +30,8 @@ python3 fo4save.py Quicksave0_....fos --json
 
 Use `--json` for machine-readable output. It includes the save metadata,
 detailed SPECIAL values, categorized perks, unidentified perks, and stored perk
-entry count. The output can be saved to a file:
+entry count. Text and JSON output are UTF-8 on Windows, Linux, and macOS. The
+output can be saved to a file:
 
 ```bash
 python3 fo4save.py save.fos --json > character.json

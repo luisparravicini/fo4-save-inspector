@@ -1,4 +1,6 @@
+import io
 import unittest
+from contextlib import redirect_stdout
 
 import fo4save
 
@@ -62,6 +64,26 @@ class PerkArrayTests(unittest.TestCase):
         self.assertEqual(3, perks[0]["rank"])
         self.assertEqual("level_up", perks[0]["category"])
         self.assertEqual("magazine", perks[1]["category"])
+
+
+class OutputTests(unittest.TestCase):
+    def test_rank_separator_is_valid_unicode(self):
+        info = {
+            "name": "Test", "level": 2, "gender": "male", "race": "HumanRace",
+            "location": "Commonwealth", "play_time": "0d.1h.0m",
+            "current_xp": 0.0, "required_xp": 200.0,
+            "special": {},
+            "perks": [{"name": "Commando", "rank": 2,
+                       "category": "level_up", "dlc": None}],
+            "unidentified_perks": [],
+        }
+        output = io.StringIO()
+
+        with redirect_stdout(output):
+            fo4save.print_character(info)
+
+        self.assertIn("Commando — rank 2", output.getvalue())
+        self.assertNotIn("\N{REPLACEMENT CHARACTER}", output.getvalue())
 
 
 if __name__ == "__main__":

@@ -561,7 +561,17 @@ def print_character(info: dict[str, Any]) -> None:
             print(f"  {perk['plugin']}:{perk['local_form_id']}{dlc}{suffix}")
 
 
+def configure_cli_encoding() -> None:
+    """Keep native-command output UTF-8 across Windows and POSIX shells."""
+    for stream in (sys.stdout, sys.stderr):
+        try:
+            stream.reconfigure(encoding="utf-8")
+        except (AttributeError, OSError):
+            pass
+
+
 def main(argv: list[str] | None = None) -> int:
+    configure_cli_encoding()
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("save", type=Path, help="Fallout 4/VR .fos save")
     parser.add_argument("--names", type=Path,
