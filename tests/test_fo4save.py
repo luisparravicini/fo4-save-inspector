@@ -65,6 +65,17 @@ class PerkArrayTests(unittest.TestCase):
         self.assertEqual("level_up", perks[0]["category"])
         self.assertEqual("magazine", perks[1]["category"])
 
+    def test_quest_rewards_are_classified(self):
+        entries = [
+            {"name": "Protector of Acadia", "rank": 1,
+             "form_id": "0302C9B3", "local_form_id": "02C9B3",
+             "plugin": "DLCCoast.esm"},
+        ]
+
+        perks, _ = fo4save.make_character_perks(entries)
+
+        self.assertEqual("quest", perks[0]["category"])
+
 
 class OutputTests(unittest.TestCase):
     def test_rank_separator_is_valid_unicode(self):

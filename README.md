@@ -17,10 +17,15 @@ extracts:
 > unvalidated.
 
 Perks are grouped and alphabetized as level-up choices, magazine perks,
-bobbleheads, companion affinity perks, and other bonuses. Companion labels use
-the same `Perk (Companion affinity perk)` format for the base game and DLCs.
-Perks defined by an official add-on receive a secondary label such as
-`[Far Harbor]` or `[Nuka-World]` without being moved out of their category.
+bobbleheads, companion affinity perks, quest perks, and other bonuses. The
+built-in names cover the complete base-game perk chart and its official DLC
+ranks, official perk magazines, skill bobbleheads, companion affinity perks,
+and documented permanent quest rewards. Temporary effects, NPC abilities,
+equipment modifiers, cut content, and internal bookkeeping perks are not
+presented as character-sheet perks. Companion labels use the same
+`Perk (Companion affinity perk)` format for the base game and DLCs. Perks
+defined by an official add-on receive a secondary label such as `[Far Harbor]`
+or `[Nuka-World]` without being moved out of their category.
 
 The adjacent `.f4se` co-save is not required for these fields.
 
